@@ -37,52 +37,63 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
-        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ic_launcher);
-        getSupportActionBar().setTitle("");
+
+
         imageView = (ImageView) findViewById(R.id.image_welcome);
         imageView.setImageResource(R.drawable.bc_logo_med);
         mEnterButton = (Button) findViewById(R.id.enter_button);
+
         mEnterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prefs = getSharedPreferences("ba.classroom", Context.MODE_PRIVATE);
-                String email = prefs.getString("email",null);
-                String password = prefs.getString("password",null);
-
-                if(email != "" && email != null && password != null && password != ""){
-                    JSONObject json = new JSONObject();
-                    try {
-                        json.put("email", email);
-                        json.put("password",password);
-                    }catch(JSONException e){
-                        e.printStackTrace();
-                    }
-                    ConnectHelper.students.clear();
-                    ConnectHelper.studentNames.clear();
-                    ConnectHelper.studentLastnames.clear();
-                    ConnectHelper.studentTokens.clear();
-                    ConnectHelper.studentRoles.clear();
-                    ConnectHelper.courses.clear();
-                    ConnectHelper.courseNames.clear();
-                    ConnectHelper.courseDescriptions.clear();
-                    ConnectHelper.courseTeachers.clear();
-
-                    ProgressDialog pDialog = new ProgressDialog(WelcomeActivity.this);
-                    pDialog.setMessage("Entering classroom ....");
-                    pDialog.show();
-                    ServiceRequest.post(url + "api/login", json.toString(), ConnectHelper.loginCheck(WelcomeActivity.this,url));
-                    pDialog.dismiss();
-                }else{
-                    Intent i = LogInActivity.newIntent(WelcomeActivity.this);
-                    startActivityForResult(i, 0);
-                }
+                checkIfSignedIn();
             }
         });
     }
 
-    
+    /**
+     * Method that checks is there already user in session.
+     */
+    public void checkIfSignedIn(){
+        prefs = getSharedPreferences("ba.classroom", Context.MODE_PRIVATE);
+        String email = prefs.getString("email",null);
+        String password = prefs.getString("password",null);
+
+        if(email != "" && email != null && password != null && password != ""){
+
+        }else{
+            Intent i = LogInActivity.newIntent(WelcomeActivity.this);
+            startActivityForResult(i, 0);
+        }
+    }
+
+    /**
+     * Method that sends request to web server. This request is for signing into web application.
+     * @param email - User email.
+     * @param password - User password.
+     */
+    public void sendRequestToServer(String email, String password){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("email", email);
+            json.put("password",password);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        ConnectHelper.clearAll();
+
+        ProgressDialog pDialog = new ProgressDialog(WelcomeActivity.this);
+        pDialog.setMessage("Entering classroom ....");
+        pDialog.show();
+
+        ServiceRequest.post(url + "api/login", json.toString(), ConnectHelper.loginCheck(WelcomeActivity.this,url));
+
+        pDialog.dismiss();
+    }
+
+
+
     @Override
     public void onBackPressed() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);

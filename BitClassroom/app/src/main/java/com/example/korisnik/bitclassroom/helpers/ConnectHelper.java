@@ -454,4 +454,32 @@ public class ConnectHelper {
         };
     }
 
+    /**
+     * Method that clears all static lists in this class
+     */
+    public static void clearAll(){
+
+        students.clear();
+        studentNames.clear();
+        studentLastnames.clear();
+        studentTokens.clear();
+        studentRoles.clear();
+        studentPics.clear();
+        students.clear();
+        studentIds.clear();
+
+        courses.clear();
+        coursePictures.clear();
+        courseWebIds.clear();
+        courseNames.clear();
+        courseDescriptions.clear();
+        courseTeachers.clear();
+
+        postContents.clear();
+        postDueDates.clear();
+        postNames.clear();
+        postTimestamps.clear();
+        posts.clear();
+        postUsers.clear();
+    }
 }
